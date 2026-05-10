@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moumen ZwD — Services Sociaux Gratuits</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />    
+  <style>    
+    /* ========================    
+       CSS VARIABLES & RESET    
+    ======================== */    
+    :root {    
+      --bg-dark: #050510;    
+      --bg-darker: #02020a;    
+      --blue: #00c3ff;    
+      --purple: #7b2fff;    
+      --magenta: #ff2d78;    
+      --cyan: #00ffd5;    
+      --neon-glow-blue: 0 0 20px rgba(0,195,255,0.6), 0 0 60px rgba(0,195,255,0.3);    
+      --neon-glow-purple: 0 0 20px rgba(123,47,255,0.6), 0 0 60px rgba(123,47,255,0.3);    
+      --neon-glow-magenta: 0 0 20px rgba(255,45,120,0.6), 0 0 60px rgba(255,45,120,0.3);    
+      --glass-bg: rgba(255,255,255,0.04);    
+      --glass-border: rgba(255,255,255,0.1);    
+      --text-primary: #ffffff;    
+      --text-secondary: rgba(255,255,255,0.65);    
+      --text-muted: rgba(255,255,255,0.35);    
+      --font-main: 'Poppins', sans-serif;    
+      --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);    
+      --radius: 18px;    
+    }    
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }    
+    html { scroll-behavior: smooth; }    
+    body {    
+      font-family: var(--font-main);    
+      background: var(--bg-dark);    
+      color: var(--text-primary);    
+      overflow-x: hidden;    
+      cursor: none;    
+    }    
+    body.rtl { font-family: 'Poppins', sans-serif; direction: rtl; text-align: right; }    
+    a { text-decoration: none; color: inherit; }    
+    ul { list-style: none; }    
+    img { max-width: 100%; }    
+    
+    /* ========================    
+       CUSTOM CURSOR    
+    ======================== */    
+    #cursor {    
+      width: 12px; height: 12px;    
+      background: var(--blue);    
+      border-radius: 50%;    
+      position: fixed;    
+      pointer-events: none;    
+      z-index: 99999;    
+      transform: translate(-50%, -50%);    
+      transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;    
+      mix-blend-mode: screen;    
+    }    
+    #cursor-ring {    
+      width: 38px; height: 38px;    
+      border: 1.5px solid rgba(0,195,255,0.55);    
+      border-radius: 50%;    
+      position: fixed;    
+      pointer-events: none;    
+      z-index: 99998;    
+      transform: translate(-50%, -50%);    
+      transition: transform 0.12s ease-out, width 0.25s, height 0.25s;    
+    }    
+    body:hover #cursor { opacity: 1; }    
+    
+    /* ========================    
+       ANIMATED BACKGROUND    
+    ======================== */    
+    .bg-canvas {    
+      position: fixed;    
+      top: 0; left: 0;    
+      width: 100%; height: 100%;    
+      z-index: 0;    
+      overflow: hidden;    
+      pointer-events: none;    
+    }    
+    .bg-canvas::before {    
+      content: '';    
+      position: absolute;    
+      inset: 0;    
+      background: radial-gradient(ellipse at 20% 20%, rgba(123,47,255,0.18) 0%, transparent 60%),    
+                  radial-gradient(ellipse at 80% 80%, rgba(0,195,255,0.15) 0%, transparent 60%),    
+                  radial-gradient(ellipse at 50% 50%, rgba(255,45,120,0.07) 0%, transparent 70%);    
+      animation: bgShift 12s ease-in-out infinite alternate;    
+    }    
+    @keyframes bgShift {    
+      0%   { opacity: 0.8; transform: scale(1); }    
+      100% { opacity: 1;   transform: scale(1.08); }    
+    }    
+    /* Floating orbs */    
+    .orb {    
+      position: absolute;    
+      border-radius: 50%;    
+      filter: blur(80px);    
+      animation: orbFloat linear infinite;    
+      opacity: 0.35;    
+    }    
+    .orb-1 { width: 520px; height: 520px; background: radial-gradient(circle, #7b2fff 0%, transparent 70%); top: -180px; left: -180px; animation-duration: 22s; }    
+    .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, #00c3ff 0%, transparent 70%); bottom: -120px; right: -120px; animation-duration: 28s; animation-delay: -8s; }    
+    .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #ff2d78 0%, transparent 70%); top: 50%; left: 60%; animation-duration: 18s; animation-delay: -4s; }    
+    .orb-4 { width: 200px; height: 200px; background: radial-gradient(circle, #00ffd5 0%, transparent 70%); top: 30%; left: 10%; animation-duration: 24s; animation-delay: -12s; }    
+    @keyframes orbFloat {    
+      0%, 100% { transform: translateY(0px) translateX(0px); }    
+      25%       { transform: translateY(-40px) translateX(30px); }    
+      50%       { transform: translateY(-20px) translateX(-20px); }    
+      75%       { transform: translateY(30px) translateX(15px); }    
+    }    
+    
+    /* Particle grid */    
+    .grid-overlay {    
+      position: absolute;    
+      inset: 0;    
+      background-image:    
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),    
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);    
+      background-size: 60px 60px;    
+      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 75%);    
+    }    
+    
+    /* ========================    
+       MOUSE GLOW ORB    
+    ======================== */    
+    #mouse-glow {    
+      width: 400px; height: 400px;    
+      background: radial-gradient(circle, rgba(0,195,255,0.12) 0%, transparent 70%);    
+      border-radius: 50%;    
+      position: fixed;    
+      pointer-events: none;    
+      z-index: 1;    
+      transform: translate(-50%, -50%);    
+      transition: transform 0.06s linear;    
+    }    
+    
+    /* ========================    
+       LOADER    
+    ======================== */    
+    #loader {    
+      position: fixed;    
+      inset: 0;    
+      z-index: 99997;    
+      background: var(--bg-darker);    
+      display: flex;    
+      flex-direction: column;    
+      align-items: center;    
+      justify-content: center;    
+      gap: 28px;    
+      transition: opacity 0.6s ease, visibility 0.6s ease;    
+    }    
+    #loader.hidden { opacity: 0; visibility: hidden; }    
+    .loader-logo {    
+      font-size: 2.2rem;    
+      font-weight: 800;    
+      background: linear-gradient(135deg, var(--blue), var(--purple), var(--magenta));    
+      -webkit-background-clip: text;    
+      -webkit-text-fill-color: transparent;    
+      background-clip: text;    
+      letter-spacing: 2px;    
+    }    
+    .loader-bar {    
+      width: 220px; height: 3px;    
+      background: rgba(255,255,255,0.08);    
+      border-radius: 99px;    
+      overflow: hidden;    
+    }    
+    .loader-fill {    
+      height: 100%;    
+      width: 0%;    
+      background: linear-gradient(90deg, var(--blue), var(--purple), var(--magenta));    
+      border-radius: 99px;    
+      animation: loadFill 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;    
+    }    
+    @keyframes loadFill { 0% { width: 0%; } 100% { width: 100%; } }    
+    .loader-dots {    
+      display: flex; gap: 8px;    
+    }    
+    .loader-dots span {    
+      width: 8px; height: 8px;    
+      border-radius: 50%;    
+      background: var(--blue);    
+      animation: dotPulse 1s ease-in-out infinite;    
+    }    
+    .loader-dots span:nth-child(2) { background: var(--purple); animation-delay: 0.2s; }    
+    .loader-dots span:nth-child(3) { background: var(--magenta); animation-delay: 0.4s; }    
+    @keyframes dotPulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }    
+    
+    /* ========================    
+       NOTIFICATION POPUP    
+    ======================== */    
+    #notif {    
+      position: fixed;    
+      bottom: 30px; right: 30px;    
+      z-index: 99996;    
+      background: rgba(10, 10, 30, 0.95);    
+      border: 1px solid rgba(0,195,255,0.4);    
+      border-radius: 14px;    
+      padding: 16px 24px;    
+      display: flex;    
+      align-items: center;    
+      gap: 12px;    
+      font-size: 0.9rem;    
+      font-weight: 500;    
+      color: var(--blue);    
+      box-shadow: var(--neon-glow-blue);    
+      transform: translateY(100px);    
+      opacity: 0;    
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);    
+    }    
+    #notif.show { transform: translateY(0); opacity: 1; }    
+    .rtl #notif { right: auto; left: 30px; }    
+    
+    /* ========================    
+       NAVBAR    
+    ======================== */    
+    #navbar {    
+      position: fixed;    
+      top: 0; left: 0; right: 0;    
+      z-index: 1000;    
+      padding: 18px 5%;    
+      display: flex;    
+      align-items: center;    
+      justify-content: space-between;    
+      transition: var(--transition);    
+      background: transparent;    
+    }    
+    #navbar.scrolled {    
+      background: rgba(5, 5, 20, 0.85);    
+      backdrop-filter: blur(20px);    
+      -webkit-backdrop-filter: blur(20px);    
+      border-bottom: 1px solid var(--glass-border);    
+      padding: 14px 5%;    
+    }    
+    .nav-logo {    
+      font-size: 1.45rem;    
+      font-weight: 800;    
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 50%, var(--magenta) 100%);    
+      -webkit-background-clip: text;    
+      -webkit-text-fill-color: transparent;    
+      background-clip: text;    
+      letter-spacing: 1px;    
+    }    
+    .nav-links {    
+      display: flex;    
+      align-items: center;    
+      gap: 36px;    
+    }    
+    .nav-links a {    
+      font-size: 0.9rem;    
+      font-weight: 500;    
+      color: var(--text-secondary);    
+      transition: var(--transition);    
+      position: relative;    
+    }    
+    .nav-links a::after {    
+      content: '';    
+      position: absolute;    
+      bottom: -4px; left: 0;    
+      width: 0%; height: 2px;    
+      background: linear-gradient(90deg, var(--blue), var(--purple));    
+      border-radius: 2px;    
+      transition: width 0.3s ease;    
+    }    
+    .nav-links a:hover { color: #fff; }    
+    .nav-links a:hover::after { width: 100%; }    
+    .rtl .nav-links a::after { left: auto; right: 0; }    
+    .nav-right {    
+      display: flex;    
+      align-items: center;    
+      gap: 16px;    
+    }    
+    .lang-btn {    
+      background: rgba(255,255,255,0.07);    
+      border: 1px solid rgba(255,255,255,0.15);    
+      border-radius: 50px;    
+      padding: 8px 18px;    
+      font-size: 0.82rem;    
+      font-weight: 600;    
+      color: var(--text-primary);    
+      cursor: none;    
+      transition: var(--transition);    
+      display: flex;    
+      align-items: center;    
+      gap: 8px;    
+      white-space: nowrap;    
+    }    
+    .lang-btn:hover {    
+      background: rgba(0,195,255,0.15);    
+      border-color: var(--blue);    
+      box-shadow: 0 0 18px rgba(0,195,255,0.3);    
+    }    
+    .hamburger {    
+      display: none;    
+      flex-direction: column;    
+      gap: 5px;    
+      cursor: none;    
+      padding: 4px;    
+    }    
+    .hamburger span {    
+      display: block;    
+      width: 24px; height: 2px;    
+      background: var(--text-primary);    
+      border-radius: 2px;    
+      transition: var(--transition);    
+    }    
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }    
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: translateX(-10px); }    
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }    
+    
+    /* Mobile nav */    
+    .mobile-nav {    
+      display: none;    
+      position: fixed;    
+      top: 0; left: 0; right: 0; bottom: 0;    
+      z-index: 999;    
+      background: rgba(5, 5, 20, 0.97);    
+      backdrop-filter: blur(20px);    
+      flex-direction: column;    
+      align-items: center;    
+      justify-content: center;    
+      gap: 36px;    
+      opacity: 0;    
+      pointer-events: none;    
+      transition: opacity 0.35s ease;    
+    }    
+    .mobile-nav.open { display: flex; opacity: 1; pointer-events: all; }    
+    .mobile-nav a {    
+      font-size: 1.5rem;    
+      font-weight: 600;    
+      color: var(--text-secondary);    
+      transition: var(--transition);    
+    }    
+    .mobile-nav a:hover { color: var(--blue); }    
+    
+    /* ========================    
+       MAIN CONTENT WRAPPER    
+    ======================== */    
+    main { position: relative; z-index: 2; }    
+    
+    /* ========================    
+       HERO SECTION    
+    ======================== */    
+    #home {    
+      min-height: 100vh;    
+      display: flex;    
+      flex-direction: column;    
+      align-items: center;    
+      justify-content: center;    
+      text-align: center;    
+      padding: 140px 5% 100px;    
+    }    
+    .hero-badge {    
+      display: inline-flex;    
+      align-items: center;    
+      gap: 8px;    
+      background: rgba(123,47,255,0.15);    
+      border: 1px solid rgba(123,47,255,0.35);    
+      border-radius: 50px;    
+      padding: 8px 20px;    
+      font-size: 0.78rem;    
+      font-weight: 600;    
+      color: #c084fc;    
+      letter-spacing: 1.5px;    
+      text-transform: uppercase;    
+      margin-bottom: 28px;    
+      animation: fadeInDown 0.7s ease forwards;    
+    }    
+    .hero-badge .dot {    
+      width: 7px; height: 7px;    
+      background: #a855f7;    
+      border-radius: 50%;    
+      animation: pulse 1.5s infinite;    
+    }    
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.4); } }    
+    .hero-title {    
+      font-size: clamp(2.4rem, 6vw, 5rem);    
+      font-weight: 900;    
+      line-height: 1.12;    
+      margin-bottom: 24px;    
+      animation: fadeInUp 0.8s ease 0.1s both;    
+    }    
+    .gradient-text {    
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 35%, var(--magenta) 65%, var(--cyan) 100%);    
+      background-size: 200% 200%;    
+      -webkit-background-clip: text;    
+      -webkit-text-fill-color: transparent;    
+      background-clip: text;    
+      animation: gradientShift 4s ease-in-out infinite;    
+    }    
+    @keyframes gradientShift {    
+      0%, 100% { background-position: 0% 50%; }    
+      50%       { background-position: 100% 50%; }    
+    }    
+    .hero-sub {    
+      font-size: clamp(1rem, 2vw, 1.2rem);    
+      color: var(--text-secondary);    
+      max-width: 580px;    
+      line-height: 1.7;    
+      margin-bottom: 48px;    
+      animation: fadeInUp 0.8s ease 0.2s both;    
+    }    
+    .hero-cta {    
+      display: flex;    
+      flex-wrap: wrap;    
+      gap: 16px;    
+      justify-content: center;    
+      animation: fadeInUp 0.8s ease 0.3s both;    
+    }    
+    .btn-primary {    
+      display: inline-flex;    
+      align-items: center;    
+      gap: 10px;    
+      background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);    
+      color: #fff;    
+      font-size: 0.95rem;    
+      font-weight: 600;    
+      padding: 15px 36px;    
+      border-radius: 50px;    
+      border: none;    
+      cursor: none;    
+      position: relative;    
+      overflow: hidden;    
+      transition: var(--transition);    
+      box-shadow: 0 0 30px rgba(123,47,255,0.5), 0 4px 20px rgba(0,0,0,0.4);    
+    }    
+    .btn-primary::before {    
+      content: '';    
+      position: absolute;    
+      inset: 0;    
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);    
+      opacity: 0;    
+      transition: opacity 0.35s;    
+    }    
+    .btn-primary:hover {    
+      transform: translateY(-3px) scale(1.04);    
+      box-shadow: 0 0 50px rgba(0,195,255,0.55), 0 8px 30px rgba(0,0,0,0.5);    
+    }    
+    .btn-primary:hover::before { opacity: 1; }    
+    .btn-primary:active { transform: scale(0.97); }    
+    .btn-primary span { position: relative; z-index: 1; }    
+    .btn-secondary {    
+      display: inline-flex;    
+      align-items: center;    
+      gap: 10px;    
+      background: transparent;    
+      color: var(--text-primary);    
+      font-size: 0.95rem;    
+      font-weight: 600;    
+      padding: 14px 36px;    
+      border-radius: 50px;    
+      border: 1.5px solid rgba(255,255,255,0.2);    
+      cursor: none;    
+      transition: var(--transition);    
+    }    
+    .btn-secondary:hover {    
+      border-color: var(--blue);    
+      color: var(--blue);    
+      box-shadow: var(--neon-glow-blue);    
+      transform: translateY(-3px);    
+    }    
+    .btn-secondary:active { transform: scale(0.97); }    
+    /* Floating hero stats */    
+    .hero-stats {    
+      display: flex;    
+      flex-wrap: wrap;    
+      gap: 24px;    
+      justify-content: center;    
+      margin-top: 64px;    
+      animation: fadeInUp 0.8s ease 0.4s both;    
+    }    
+    .hero-stat {    
+      background: var(--glass-bg);    
+      border: 1px solid var(--glass-border);    
+      border-radius: 14px;    
+      padding: 16px 28px;    
+      backdrop-filter: blur(10px);    
+      text-align: center;    
+    }    
+    .hero-stat .stat-num {    
+      font-size: 1.6rem;    
+      font-weight: 800;    
+      background: linear-gradient(135deg, var(--blue), var(--purple));    
+      -webkit-background-clip: text;    
+      -webkit-text-fill-color: transparent;    
+      background-clip: text;    
+    }    
+    .hero-stat .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }    
+    
+    /* ========================    
+       SECTION BASE    
+    ======================== */    
+    section { padding: 100px 5%; }    
+    .section-header { text-align: center; margin-bottom: 64px; }    
+    .section-tag {    
+      display: inline-block;    
+      font-size: 0.75rem;    
+      font-weight: 700;    
+      letter-spacing: 2.5px;    
+      text-transform: uppercase;    
+      color: var(--blue);    
+      margin-bottom: 14px;    
+    }    
+    .section-title {    
+      font-size: clamp(1.8rem, 4vw, 2.8rem);    
+      font-weight: 800;    
+      line-height: 1.2;    
+    }    
+    .section-sub {    
+      font-size: 1rem;    
+      color: var(--text-secondary);    
+      margin-top: 14px;    
+      max-width: 500px;    
+      margin-left: auto;    
+      margin-right: auto;    
+      line-height: 1.7;    
+    }    
+    .rtl .section-header { text-align: center; }    
+    
+    /* Scroll reveal */    
+    .reveal {    
+      opacity: 0;    
+      transform: translateY(40px);    
+      transition: opacity 0.7s ease, transform 0.7s ease;    
+    }    
+    .reveal.visible {    
+      opacity: 1;    
+      transform: translateY(0);    
+    }    
+    
+    /* ========================    
+       STATS / COUNTER SECTION    
+    ======================== */    
+    #stats {    
+      padding: 60px 5%;    
+      background: linear-gradient(135deg, rgba(123,47,255,0.1) 0%, rgba(0,195,255,0.06) 100%);    
+      border-top: 1px solid var(--glass-border);    
+      border-bottom: 1px solid var(--glass-border);    
+    }    
+    .stats-grid {    
+      display: grid;    
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));    
+      gap: 40px;    
+      max-width: 900px;    
+      margin: 0 auto;    
+      text-align: center;    
+    }    
+    .stat-item .num {    
+      font-size: 2.8rem;    
+      font-weight: 900;    
+      background: linear-gradient(135deg, var(--blue), var(--cyan));    
+      -webkit-background-clip: text;    
+      -webkit-text-fill-color: transparent;    
+      background-clip: text;    
+      display: block;    
+    }    
+    .stat-item .label {    
+      font-size: 0.9rem;    
+      color: var(--text-secondary);    
+      margin-top: 6px;    
+    }    
+    
+    /* ========================    
+       SERVICES SECTION    
+    ======================== */    
+    #services { background: transparent; }    
+    .services-grid {    
+      display: grid;    
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));    
+      gap: 24px;    
+      max-width: 1200px;    
+      margin: 0 auto;    
+    }    
+    .service-card {    
+      background: var(--glass-bg);    
+      border: 1px solid var(--glass-border);    
+      border-radius: var(--radius);    
+      padding: 36px 30px;    
+      backdrop-filter: blur(14px);    
+      -webkit-backdrop-filter: blur(14px);    
+      transition: var(--transition);    
+      position: relative;    
+      overflow: hidden;    
+      cursor: default;    
+    }    
+    .service-card::before {    
+      content: '';    
+      position: absolute;    
+      inset: 0;    
+      border-radius: var(--radius);    
+      padding: 1px;    
+      background: linear-gradient(135deg, transparent, transparent);    
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);    
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);    
+      -webkit-mask-composite: xor;    
+      mask-composite: exclude;    
+      transition: var(--transition);    
+    }    
+    .service-card:hover {    
+      transform: translateY(-8px) scale(1.025);    
+      border-color: transparent;    
+      background: rgba(255,255,255,0.065);    
+    }    
+    .service-card:hover::before {    
+      background: linear-gradient(135deg, var(--blue), var(--purple), var(--magenta));    
+    }    
+    .service-card:hover { box-shadow: 0 0 40px rgba(0,195,255,0.2), 0 20px 60px rgba(0,0,0,0.5); }    
+    .service-card .icon-wrap {    
+      width: 60px; height: 60px;    
+      border-radius: 16px;    
+      display: flex;    
+      align-items: center;    
+      justify-content: center;    
+      font-size: 1.6rem;    
+      margin-bottom: 20px;    
+      transition: var(--transition);    
+    }    
+    .service-card:hover .icon-wrap { transform: scale(1.12) rotate(-5deg); }    
+    .icon-instagram { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }    
+    .icon-pubg       { background: linear-gradient(135deg, #f7971e, #ffd200); color: #1a1200; }    
+    .icon-snapchat   { background: #fffc00; color: #1a1a1a; }    
+    .icon-whatsapp   { background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; }    
+    .icon-facebook   { background: linear-gradient(135deg, #1877f2, #0c52b0); color: #fff; }    
+    .icon-tiktok     { background: linear-gradient(135deg, #010101, #010101); color: #fff; box-shadow: inset 3px 0 0 #69c9d0, inset -3px 0 0 #ee1d52; }    
+    .service-name {    
+      font-size: 1.1rem;    
+      font-weight: 700;    
+      margin-bottom: 10px;    
+    }    
+    .service-desc {    
+      font-size: 0.88rem;    
+      color: var(--text-secondary);    
+      line-height: 1.65;    
+      margin-bottom: 28px;    
+    }    
+    .service-badge {    
+      display: inline-block;    
+      font-size: 0.72rem;    
+      font-weight: 700;    
+      letter-spacing: 0.5px;    
+      padding: 3px 10px;    
+      border-radius: 50px;    
+      margin-bottom: 14px;    
+      background: rgba(0,195,255,0.12);    
+      color: var(--blue);    
+      border: 1px solid rgba(0,195,255,0.25);    
+    }    
+    .service-btn {    
+      display: inline-flex;    
+      align-items: center;    
+      gap: 8px;    
+      width: 100%;    
+      justify-content: center;    
+      background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);    
+      color: #fff;    
+      font-size: 0.88rem;    
+      font-weight: 600;    
+      padding: 13px 24px;    
+      border-radius: 50px;    
+      border: none;    
+      cursor: none;    
+      transition: var(--transition);    
+      box-shadow: 0 0 20px rgba(123,47,255,0.35);    
+      position: relative;    
+      overflow: hidden;    
+    }    
+    .service-btn::after {    
+      content: '';    
+      position: absolute;    
+      inset: 0;    
+      background: linear-gradient(135deg, var(--blue), var(--magenta));    
+      opacity: 0;    
+      transition: opacity 0.35s;    
+    }    
+    .service-btn:hover {    
+      transform: translateY(-2px);    
+      box-shadow: 0 0 35px rgba(0,195,255,0.55);    
+    }    
+    .service-btn:hover::after { opacity: 1; }    
+    .service-btn:active { transform: scale(0.97); }    
+    .service-btn span, .service-btn i { position: relative; z-index: 1; }    
+    
+    /* ========================    
+       WHY CHOOSE US    
+    ======================== */    
+    #about {    
+      background: rgba(255,255,255,0.015);    
+      border-top: 1px solid var(--glass-border);    
+      border-bottom: 1px solid var(--glass-border);    
+    }    
+    .why-grid {    
+      display: grid;    
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));    
+      gap: 24px;    
+      max-width: 1100px;    
+      margin: 0 auto;    
+    }    
+    .why-card {    
+      background: var(--glass-bg);    
+      border: 1px solid var(--glass-border);    
+      border-radius: var(--radius);    
+      padding: 36px 28px;    
+      text-align: center;    
+      backdrop-filter: blur(10px);    
+      transition: var(--transition);    
+    }    
+    .why-card:hover {    
+      transform: translateY(-6px) scale(1.02);    
+      border-color: rgba(123,47,255,0.4);    
+      box-shadow: 0 0 30px rgba(123,47,255,0.2), 0 16px 50px rgba(0,0,0,0.4);    
+    }    
+    .why-icon {    
+      width: 64px; height: 64px;    
+      border-radius: 50%;    
+      display: flex;    
+      align-items: center;    
+      justify-content: center;    
+      font-size: 1.5rem;    
+      margin: 0 auto 20px;    
+    }    
+    .wi-1 { background: linear-gradient(135deg, #7b2fff, #00c3ff); }    
+    .wi-2 { background: linear-gradient(135deg, #00ffd5, #00c3ff); }    
+    .wi-3 { background: linear-gradient(135deg, #ff2d78, #7b2fff); }    
+    .wi-4 { background: linear-gradient(135deg, #ffd200, #ff2d78); }    
+    .why-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }    
+    .why-desc { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.6; }    
+    
+    /* ========================    
+       MOST REQUESTED    
+    ======================== */    
+    #contact { background: transparent; }    
+    .hot-grid {    
+      display: grid;    
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));    
+      gap: 24px;    
+      max-width: 1100px;    
+      margin: 0 auto;    
+    }    
+    .hot-card {    
+      background: var(--glass-bg);    
+      border: 1px solid var(--glass-border);    
+      border-radius: var(--radius);    
+      padding: 28px 26px;    
+      backdrop-filter: blur(10px);    
+      display: flex;    
+      align-items: center;    
+      gap: 20px;    
+      transition: var(--transition);    
+      position: relative;    
+      overflow: hidden;    
+    }    
+    .hot-card:hover {    
+      transform: translateY(-5px) scale(1.02);    
+      box-shadow: 0 0 35px rgba(255,45,120,0.2), 0 16px 40px rgba(0,0,0,0.4);    
+      border-color: rgba(255,45,120,0.35);    
+    }    
+    .hot-badge {    
+      position: absolute;    
+      top: 14px; right: 16px;    
+      font-size: 0.72rem;    
+      font-weight: 800;    
+      padding: 4px 12px;    
+      border-radius: 50px;    
+    }    
+    .rtl .hot-badge { right: auto; left: 16px; }    
+    .hot-badge.fire { background: rgba(255,45,120,0.2); color: #ff2d78; border: 1px solid rgba(255,45,120,0.35); }    
+    .hot-badge.star { background: rgba(255,210,0,0.15); color: #ffd200; border: 1px solid rgba(255,210,0,0.3); }    
+    .hot-badge.new  { background: rgba(0,195,255,0.12); color: var(--blue); border: 1px solid rgba(0,195,255,0.3); }    
+    .hot-icon { font-size: 2rem; flex-shrink: 0; }    
+    .hot-info .hot-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }    
+    .hot-info .hot-count { font-size: 0.82rem; color: var(--text-muted); }    
+    
+    /* ========================    
+       CTA BANNER    
+    ======================== */    
+    .cta-banner {    
+      max-width: 900px;    
+      margin: 0 auto;    
+      background: linear-gradient(135deg, rgba(123,47,255,0.2) 0%, rgba(0,195,255,0.12) 100%);    
+      border: 1px solid rgba(123,47,255,0.3);    
+      border-radius: 24px;    
+      padding: 64px 48px;    
+      text-align: center;    
+      backdrop-filter: blur(10px);    
+    }    
+    .cta-banner h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; margin-bottom: 16px; }    
+    .cta-banner p { color: var(--text-secondary); font-size: 1rem; margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }    
+    
+    /* ========================    
+       FOOTER    
+    ======================== */    
+    footer {    
+      position: relative;    
+      z-index: 2;    
+      background: rgba(0,0,0,0.5);    
+      border-top: 1px solid var(--glass-border);    
+      padding: 60px 5% 30px;    
+    }    
+    .footer-grid {    
+      display: grid;    
+      grid-template-columns: 2fr 1fr 1fr;    
+      gap: 48px;    
+      max-width: 1100px;    
+      margin: 0 auto 48px;    
+    }    
+    .footer-brand .logo {    
+      font-size: 1.4rem;    
+      font-weight: 800;    
+      background: linear-gradient(135deg, var(--blue), var(--purple), var(--magenta));    
+      -webkit-background-clip: text;    
+      -webkit-text-fill-color: transparent;    
+      background-clip: text;    
+      margin-bottom: 14px;    
+    }    
+    .footer-brand p { font-size: 0.87rem; color: var(--text-muted); line-height: 1.65; max-width: 280px; }    
+    .social-links { display: flex; gap: 12px; margin-top: 24px; }    
+    .social-links a {    
+      width: 38px; height: 38px;    
+      background: rgba(255,255,255,0.06);    
+      border: 1px solid rgba(255,255,255,0.12);    
+      border-radius: 10px;    
+      display: flex;    
+      align-items: center;    
+      justify-content: center;    
+      color: var(--text-secondary);    
+      font-size: 0.95rem;    
+      transition: var(--transition);    
+      cursor: none;    
+    }    
+    .social-links a:hover { background: rgba(0,195,255,0.15); border-color: var(--blue); color: var(--blue); box-shadow: 0 0 15px rgba(0,195,255,0.35); }    
+    .footer-col h4 { font-size: 0.88rem; font-weight: 700; letter-spacing: 1px; color: var(--text-primary); margin-bottom: 18px; text-transform: uppercase; }    
+    .footer-col ul li { margin-bottom: 10px; }    
+    .footer-col ul li a { font-size: 0.85rem; color: var(--text-muted); transition: var(--transition); cursor: none; }    
+    .footer-col ul li a:hover { color: var(--blue); }    
+    .footer-bottom {    
+      text-align: center;    
+      padding-top: 28px;    
+      border-top: 1px solid rgba(255,255,255,0.06);    
+      font-size: 0.82rem;    
+      color: var(--text-muted);    
+      max-width: 1100px;    
+      margin: 0 auto;    
+    }    
+    
+    /* ========================    
+       ANIMATIONS    
+    ======================== */    
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }    
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }    
+    
+    /* ========================    
+       RESPONSIVE    
+    ======================== */    
+    @media (max-width: 768px) {    
+      .nav-links { display: none; }    
+      .hamburger { display: flex; }    
+      .footer-grid { grid-template-columns: 1fr; gap: 36px; }    
+      .services-grid { grid-template-columns: 1fr; }    
+      .cta-banner { padding: 40px 24px; }    
+      .hero-stats { gap: 14px; }    
+      .hero-stat { padding: 14px 20px; }    
+      body { cursor: auto; }    
+      #cursor, #cursor-ring { display: none; }    
+    }    
+    @media (max-width: 480px) {    
+      #home { padding: 120px 5% 80px; }    
+      .hero-title { font-size: 2rem; }    
+    }    
+    .icon-freefire {    
+  background: linear-gradient(135deg, #ff6a00, #ff0000);    
+  color: #fff;    
+  box-shadow: 0 0 20px rgba(255, 80, 0, 0.5);    
+}  
+
+/* === ANIMATION LANGUE PLUS DOUCE (GENTLE PULSE SANS SAUT) === */
+body.lang-switching [data-key] {
+  animation: gentleTextPulse 0.25s ease-out;
+}
+@keyframes gentleTextPulse {
+  0% { text-shadow: 0 0 0px rgba(0,195,255,0); }
+  40% { text-shadow: 0 0 5px rgba(0,195,255,0.5), 0 0 2px rgba(123,47,255,0.3); }
+  100% { text-shadow: 0 0 0px rgba(0,195,255,0); }
+}
+  </style>    
+</head>
+<body>    
+  <!-- CUSTOM CURSOR -->    
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div id="mouse-glow"></div>      
+  <!-- BACKGROUND -->    
+  <div class="bg-canvas">    
+    <div class="orb orb-1"></div>    
+    <div class="orb orb-2"></div>    
+    <div class="orb orb-3"></div>    
+    <div class="orb orb-4"></div>    
+    <div class="grid-overlay"></div>    
+  </div>      
+  <!-- LOADER -->    
+  <div id="loader">    
+    <div class="loader-logo">Moumen ZwD</div>    
+    <div class="loader-bar"><div class="loader-fill"></div></div>    
+    <div class="loader-dots"><span></span><span></span><span></span></div>    
+  </div>      
+  <!-- NOTIFICATION -->    
+  <div id="notif">    
+    <i class="fa-solid fa-bolt-lightning"></i>    
+    <span id="notif-text">Redirection en cours...</span>    
+  </div>      
+  <!-- MOBILE NAV -->    
+  <div class="mobile-nav" id="mobileNav">    
+    <a href="#home" onclick="closeMobileNav()" data-key="nav_home">Accueil</a>    
+    <a href="#services" onclick="closeMobileNav()" data-key="nav_services">Services</a>    
+    <a href="#about" onclick="closeMobileNav()" data-key="nav_about">À propos</a>    
+    <a href="#contact" onclick="closeMobileNav()" data-key="nav_contact">Contact</a>    
+  </div>      
+  <!-- NAVBAR -->    
+  <nav id="navbar">    
+    <div class="nav-logo">Moumen ZwD</div>    
+    <ul class="nav-links">    
+      <li><a href="#home" data-key="nav_home">Accueil</a></li>    
+      <li><a href="#services" data-key="nav_services">Services</a></li>    
+      <li><a href="#about" data-key="nav_about">À propos</a></li>    
+      <li><a href="#contact" data-key="nav_contact">Contact</a></li>    
+    </ul>    
+    <div class="nav-right">    
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">    
+        <i class="fa-solid fa-language"></i>    
+        <span id="langLabel">عربي</span>    
+      </button>    
+      <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">    
+        <span></span><span></span><span></span>    
+      </div>    
+    </div>    
+  </nav>      
+  <!-- MAIN -->    
+  <main>    
+    <!-- HERO -->    
+    <section id="home">    
+      <div class="hero-badge">    
+        <div class="dot"></div>    
+        <span data-key="hero_badge">Services 100% Gratuits</span>    
+      </div>    
+      <h1 class="hero-title">    
+        <span data-key="hero_title_1">Boostez votre présence</span><br />    
+        <span class="gradient-text" data-key="hero_title_2">sur les réseaux sociaux</span>    
+      </h1>    
+      <p class="hero-sub" data-key="hero_sub">Augmentez vos followers, améliorez votre visibilité et profitez de nos services premium — entièrement gratuits, livrés instantanément.</p>    
+      <div class="hero-cta">    
+        <a href="#services" class="btn-primary"><span><i class="fa-solid fa-rocket"></i> <span data-key="hero_cta1">Découvrir les services</span></span></a>    
+        <a href="#about" class="btn-secondary"><i class="fa-regular fa-circle-question"></i> <span data-key="hero_cta2">En savoir plus</span></a>    
+      </div>    
+      <div class="hero-stats reveal">    
+        <div class="hero-stat">    
+          <div class="stat-num" data-count="15000" id="hstat1">0</div>    
+          <div class="stat-label" data-key="hstat_label1">Utilisateurs actifs</div>    
+        </div>    
+        <div class="hero-stat">    
+          <div class="stat-num" data-count="6" id="hstat2">0</div>    
+          <div class="stat-label" data-key="hstat_label2">Services disponibles</div>    
+        </div>    
+        <div class="hero-stat">    
+          <div class="stat-num" id="hstat3">100%</div>    
+          <div class="stat-label" data-key="hstat_label3">Gratuit & Sécurisé</div>    
+        </div>    
+      </div>    
+    </section>    
+
+    <!-- STATS COUNTER -->    
+    <section id="stats">    
+      <div class="stats-grid reveal">    
+        <div class="stat-item"> <span class="num" data-count="15284" id="cnt1">0</span> <span class="label" data-key="stat1">Utilisateurs actifs</span> </div>    
+        <div class="stat-item"> <span class="num" data-count="98" id="cnt2" data-suffix="%">0</span> <span class="label" data-key="stat2">Taux de satisfaction</span> </div>    
+        <div class="stat-item"> <span class="num" data-count="500000" id="cnt3" data-suffix="+">0</span> <span class="label" data-key="stat3">Followers fournis</span> </div>    
+        <div class="stat-item"> <span class="num" data-count="24" id="cnt4">0</span> <span class="label" data-key="stat4">Support 24/7</span> </div>    
+      </div>    
+    </section>    
+
+    <!-- SERVICES -->    
+    <section id="services">    
+      <div class="section-header reveal">    
+        <div class="section-tag" data-key="serv_tag">Nos Services</div>    
+        <h2 class="section-title" data-key="serv_title">Des outils puissants <span class="gradient-text" data-key="serv_title_g">à votre portée</span></h2>    
+        <p class="section-sub" data-key="serv_sub">Choisissez le service dont vous avez besoin et obtenez des résultats instantanés, gratuitement.</p>    
+      </div>    
+      <div class="services-grid">    
+        <div class="service-card reveal">    
+          <div class="icon-wrap icon-instagram"><i class="fa-brands fa-instagram"></i></div>    
+          <div class="service-badge" data-key="badge_popular">Populaire</div>    
+          <div class="service-name" data-key="svc1_name">Instagram — Followers</div>    
+          <div class="service-desc" data-key="svc1_desc">Augmentez votre nombre de followers Instagram rapidement et gratuitement. Boostez votre crédibilité en quelques clics.</div>    
+          <a class="service-btn" href="https://abdelmoumen10.github.io/Instagram/" target="_blank" rel="noopener" onclick="showNotif()"><i class="fa-solid fa-arrow-up-right-from-square"></i><span data-key="btn_start">Commencer gratuitement</span></a>    
+        </div>    
+        <div class="service-card reveal">    
+          <div class="icon-wrap icon-pubg"><i class="fa-solid fa-gamepad"></i></div>    
+          <div class="service-badge" data-key="badge_hot">🔥 En vogue</div>    
+          <div class="service-name" data-key="svc2_name">PUBG — UC / Éclats</div>    
+          <div class="service-desc" data-key="svc2_desc">Obtenez des UC et des éclats PUBG gratuitement pour améliorer votre expérience de jeu et débloquer du contenu exclusif.</div>    
+          <a class="service-btn" href="https://abdelmoumen10.github.io/PUBG-MOBILE/" target="_blank" rel="noopener" onclick="showNotif()"><i class="fa-solid fa-arrow-up-right-from-square"></i><span data-key="btn_start">Commencer gratuitement</span></a>    
+        </div>    
+        <div class="service-card reveal">    
+          <div class="icon-wrap icon-snapchat"><i class="fa-brands fa-snapchat"></i></div>    
+          <div class="service-badge" data-key="badge_new">Nouveau</div>    
+          <div class="service-name" data-key="svc3_name">Snapchat — Followers</div>    
+          <div class="service-desc" data-key="svc3_desc">Développez votre audience Snapchat et augmentez votre score avec notre outil gratuit et sécurisé.</div>    
+          <a class="service-btn" href="https://abdelmoumen10.github.io/Snapchat/" target="_blank" rel="noopener" onclick="showNotif()"><i class="fa-solid fa-arrow-up-right-from-square"></i><span data-key="btn_start">Commencer gratuitement</span></a>    
+        </div>    
+        <div class="service-card reveal">    
+          <div class="icon-wrap icon-freefire"><i class="fa-solid fa-fire"></i></div>    
+          <div class="service-badge" data-key="badge_verified">Certifié</div>    
+          <div class="service-name" data-key="svc4_name">Free fire — Badge Vert</div>    
+          <div class="service-desc" data-key="svc4_desc">Obtenez des diamants Free Fire gratuits 💎 dès maintenant. Choisissez simplement le nombre de diamants dont vous avez besoin.</div>    
+          <a class="service-btn" href="https://abdelmoumen10.github.io/Free-fire/" target="_blank" rel="noopener" onclick="showNotif()"><i class="fa-solid fa-arrow-up-right-from-square"></i><span data-key="btn_start">Commencer gratuitement</span></a>    
+        </div>    
+        <div class="service-card reveal">    
+          <div class="icon-wrap icon-facebook"><i class="fa-brands fa-facebook-f"></i></div>    
+          <div class="service-badge" data-key="badge_popular">Populaire</div>    
+          <div class="service-name" data-key="svc5_name">Facebook — Followers</div>    
+          <div class="service-desc" data-key="svc5_desc">Augmentez vos abonnés Facebook et améliorez la portée de votre page professionnelle ou personnelle gratuitement.</div>    
+          <a class="service-btn" href="https://abdelmoumen10.github.io/Facebook/" target="_blank" rel="noopener" onclick="showNotif()"><i class="fa-solid fa-arrow-up-right-from-square"></i><span data-key="btn_start">Commencer gratuitement</span></a>    
+        </div>    
+        <div class="service-card reveal">    
+          <div class="icon-wrap icon-tiktok"><i class="fa-brands fa-tiktok"></i></div>    
+          <div class="service-badge" data-key="badge_hot">🔥 En vogue</div>    
+          <div class="service-name" data-key="svc6_name">TikTok — Followers</div>    
+          <div class="service-desc" data-key="svc6_desc">Faites exploser votre compte TikTok avec des followers réels. Devenez viral grâce à notre service rapide et gratuit.</div>    
+          <a class="service-btn" href="https://abdelmoumen10.github.io/Tiktok/" target="_blank" rel="noopener" onclick="showNotif()"><i class="fa-solid fa-arrow-up-right-from-square"></i><span data-key="btn_start">Commencer gratuitement</span></a>    
+        </div>    
+      </div>    
+    </section>    
+
+    <!-- WHY CHOOSE US -->    
+    <section id="about">    
+      <div class="section-header reveal">    
+        <div class="section-tag" data-key="why_tag">Pourquoi nous ?</div>    
+        <h2 class="section-title"><span data-key="why_title">Ce qui nous rend </span><span class="gradient-text" data-key="why_title_g">différents</span></h2>    
+        <p class="section-sub" data-key="why_sub">Nous nous engageons à vous fournir les meilleurs services sociaux, gratuitement et en toute sécurité.</p>    
+      </div>    
+      <div class="why-grid">    
+        <div class="why-card reveal"><div class="why-icon wi-1"><i class="fa-solid fa-bolt"></i></div><div class="why-title" data-key="why1_t">Livraison Instantanée</div><div class="why-desc" data-key="why1_d">Vos résultats commencent en quelques secondes après votre demande. Aucune attente inutile.</div></div>    
+        <div class="why-card reveal"><div class="why-icon wi-2"><i class="fa-solid fa-shield-halved"></i></div><div class="why-title" data-key="why2_t">100% Sécurisé</div><div class="why-desc" data-key="why2_d">Vos données personnelles sont protégées. Nous n'avons jamais besoin de votre mot de passe.</div></div>    
+        <div class="why-card reveal"><div class="why-icon wi-3"><i class="fa-solid fa-gift"></i></div><div class="why-title" data-key="why3_t">Entièrement Gratuit</div><div class="why-desc" data-key="why3_d">Aucun abonnement, aucune carte bancaire. Tous nos services sont offerts gratuitement, pour toujours.</div></div>    
+        <div class="why-card reveal"><div class="why-icon wi-4"><i class="fa-solid fa-headset"></i></div><div class="why-title" data-key="why4_t">Support 24/7</div><div class="why-desc" data-key="why4_d">Notre équipe est disponible à tout moment pour vous accompagner et répondre à vos questions.</div></div>    
+      </div>    
+    </section>    
+
+    <!-- MOST REQUESTED + CTA -->    
+    <section id="contact">    
+      <div class="section-header reveal"><div class="section-tag" data-key="hot_tag">Top Services</div><h2 class="section-title"><span data-key="hot_title">Les plus </span><span class="gradient-text" data-key="hot_title_g">demandés</span></h2></div>    
+      <div class="hot-grid">    
+        <div class="hot-card reveal"><div class="hot-badge fire" data-key="badge_fire">🔥 Hot</div><div class="hot-icon"><i class="fa-brands fa-tiktok" style="color:#69c9d0"></i></div><div class="hot-info"><div class="hot-name" data-key="hot1_name">TikTok Followers</div><div class="hot-count" data-key="hot1_count">+2,400 demandes cette semaine</div></div></div>    
+        <div class="hot-card reveal"><div class="hot-badge star" data-key="badge_star">⭐ Top</div><div class="hot-icon"><i class="fa-brands fa-instagram" style="color:#e6683c"></i></div><div class="hot-info"><div class="hot-name" data-key="hot2_name">Instagram Followers</div><div class="hot-count" data-key="hot2_count">+3,100 demandes cette semaine</div></div></div>    
+        <div class="hot-card reveal"><div class="hot-badge new" data-key="badge_new2">Nouveau</div><div class="hot-icon"><i class="fa-solid fa-gamepad" style="color:#ffd200"></i></div><div class="hot-info"><div class="hot-name" data-key="hot3_name">PUBG UC / Éclats</div><div class="hot-count" data-key="hot3_count">+980 demandes cette semaine</div></div></div>    
+      </div>    
+      <div class="cta-banner reveal" style="margin-top: 80px;"><h2 data-key="cta_title">Rejoignez <span class="gradient-text">15 000+</span> utilisateurs actifs</h2><p data-key="cta_sub">Des milliers d'utilisateurs font déjà confiance à Moumen ZwD pour développer leur présence en ligne. Pourquoi pas vous ?</p><a href="#services" class="btn-primary"><span><i class="fa-solid fa-fire"></i> <span data-key="cta_btn">Commencer maintenant</span></span></a></div>    
+    </section>    
+  </main>      
+
+  <!-- FOOTER -->    
+  <footer>    
+    <div class="footer-grid">    
+      <div class="footer-brand"> <div class="logo">Moumen ZwD</div> <p data-key="footer_tagline">La plateforme de référence pour booster votre présence sur les réseaux sociaux — gratuitement et en toute sécurité.</p> <div class="social-links"> <a href="https://www.instagram.com/zwdbdlmwmn?igsh=MWhrZDB2eGM5ajBrYw=="><i class="fa-brands fa-instagram"></i></a> <a href="https://www.tiktok.com/@moumen_music?_r=1&_d=f2g9ccb8ha603f&sec_uid=MS4wLjABAAAAUGJNhBE_8hrkYg0rk2bcgfoD5ByXaVUNJFfH0L3HOuHP0XGZRAE4wKz6aFKN7ixZ&share_author_id=7508599424202261511&sharer_language=en&source=h5_m&u_code=ekeb1d640237g4&timestamp=1778450655&user_id=7508599424202261511&sec_user_id=MS4wLjABAAAAUGJNhBE_8hrkYg0rk2bcgfoD5ByXaVUNJFfH0L3HOuHP0XGZRAE4wKz6aFKN7ixZ&item_author_type=1&utm_source=copy&utm_campaign=client_share&utm_medium=android&share_iid=7631562722304493319&share_link_id=b34ade26-e0c3-4680-8b48-156c377a3492&share_app_id=1233&ugbiz_name=ACCOUNT&ug_btm=b8727%2Cb7360&social_share_type=5&enable_checksum=1"><i class="fa-brands fa-tiktok"></i></a> <a href="https://www.facebook.com/zwad.bd.almwmn"><i class="fa-brands fa-facebook-f"></i></a> <a href="https://x.com/MoumenZwD10"><i class="fa-brands fa-twitter"></i></a> <a href="https://telegram.me/AbdElmoumen"><i class="fa-brands fa-telegram"></i></a> </div> </div>    
+      <div class="footer-col"><h4 data-key="footer_services">Services</h4><ul><li><a href="https://abdelmoumen10.github.io/Instagram/" target="_blank" data-key="footer_ig">Instagram</a></li><li><a href="https://abdelmoumen10.github.io/Tiktok/" target="_blank" data-key="footer_tt">TikTok</a></li><li><a href="https://abdelmoumen10.github.io/Facebook/" target="_blank" data-key="footer_fb">Facebook</a></li><li><a href="https://abdelmoumen10.github.io/Snapchat/" target="_blank" data-key="footer_sc">Snapchat</a></li><li><a href="https://abdelmoumen10.github.io/PUBG-MOBILE/" target="_blank" data-key="footer_pg">PUBG UC</a></li></ul></div>    
+      <div class="footer-col"><h4 data-key="footer_links">Liens</h4><ul><li><a href="#home" data-key="nav_home">Accueil</a></li><li><a href="#about" data-key="nav_about">À propos</a></li><li><a href="#services" data-key="nav_services">Services</a></li><li><a href="#" data-key="footer_privacy">Confidentialité</a></li><li><a href="#" data-key="footer_terms">Conditions</a></li></ul></div>    
+    </div>    
+    <div class="footer-bottom"><p data-key="footer_copy">© 2025 Moumen ZwD. Tous droits réservés. Fait avec <span style="color:var(--magenta)">♥</span> pour la communauté.</p></div>    
+  </footer>      
+
+  <!-- JAVASCRIPT (MODIFIED: smooth language switch without scroll jump) -->    
+  <script>    
+    // ===================== TRANSLATIONS =====================    
+    const LANGS = {    
+      fr: {    
+        nav_home: "Accueil", nav_services: "Services", nav_about: "À propos", nav_contact: "Contact",    
+        hero_badge: "Services 100% Gratuits", hero_title_1: "Boostez votre présence", hero_title_2: "sur les réseaux sociaux",    
+        hero_sub: "Augmentez vos followers, améliorez votre visibilité et profitez de nos services premium — entièrement gratuits, livrés instantanément.",    
+        hero_cta1: "Découvrir les services", hero_cta2: "En savoir plus", hstat_label1: "Utilisateurs actifs", hstat_label2: "Services disponibles", hstat_label3: "Gratuit & Sécurisé",    
+        stat1: "Utilisateurs actifs", stat2: "Taux de satisfaction", stat3: "Followers fournis", stat4: "Support 24/7",    
+        serv_tag: "Nos Services", serv_title: "Des outils puissants ", serv_title_g: "à votre portée", serv_sub: "Choisissez le service dont vous avez besoin et obtenez des résultats instantanés, gratuitement.",    
+        badge_popular: "Populaire", badge_hot: "🔥 En vogue", badge_new: "Nouveau", badge_verified: "Certifié", badge_fire: "🔥 Hot", badge_star: "⭐ Top", badge_new2: "Nouveau",    
+        svc1_name: "Instagram — Followers", svc1_desc: "Augmentez votre nombre de followers Instagram rapidement et gratuitement. Boostez votre crédibilité en quelques clics.",    
+        svc2_name: "PUBG — UC / Éclats", svc2_desc: "Obtenez des UC et des éclats PUBG gratuitement pour améliorer votre expérience de jeu et débloquer du contenu exclusif.",    
+        svc3_name: "Snapchat — Followers", svc3_desc: "Développez votre audience Snapchat et augmentez votre score avec notre outil gratuit et sécurisé.",    
+        svc4_name: "Free fire — Diamants gratuits 💎", svc4_desc: "Obtenez des diamants Free Fire gratuits 💎 dès maintenant. Choisissez simplement le nombre de diamants dont vous avez besoin.",    
+        svc5_name: "Facebook — Followers", svc5_desc: "Augmentez vos abonnés Facebook et améliorez la portée de votre page professionnelle ou personnelle gratuitement.",    
+        svc6_name: "TikTok — Followers", svc6_desc: "Faites exploser votre compte TikTok avec des followers réels. Devenez viral grâce à notre service rapide et gratuit.",    
+        btn_start: "Commencer gratuitement",    
+        why_tag: "Pourquoi nous ?", why_title: "Ce qui nous rend ", why_title_g: "différents", why_sub: "Nous nous engageons à vous fournir les meilleurs services sociaux, gratuitement et en toute sécurité.",    
+        why1_t: "Livraison Instantanée", why1_d: "Vos résultats commencent en quelques secondes après votre demande. Aucune attente inutile.",    
+        why2_t: "100% Sécurisé", why2_d: "Vos données personnelles sont protégées. Nous n'avons jamais besoin de votre mot de passe.",    
+        why3_t: "Entièrement Gratuit", why3_d: "Aucun abonnement, aucune carte bancaire. Tous nos services sont offerts gratuitement, pour toujours.",    
+        why4_t: "Support 24/7", why4_d: "Notre équipe est disponible à tout moment pour vous accompagner et répondre à vos questions.",    
+        hot_tag: "Top Services", hot_title: "Les plus ", hot_title_g: "demandés", hot1_name: "TikTok Followers", hot1_count: "+2,400 demandes cette semaine", hot2_name: "Instagram Followers", hot2_count: "+3,100 demandes cette semaine", hot3_name: "PUBG UC / Éclats", hot3_count: "+980 demandes cette semaine",    
+        cta_title: "Rejoignez <span class='gradient-text'>15 000+</span> utilisateurs actifs", cta_sub: "Des milliers d'utilisateurs font déjà confiance à Moumen ZwD pour développer leur présence en ligne. Pourquoi pas vous ?", cta_btn: "Commencer maintenant",    
+        footer_tagline: "La plateforme de référence pour booster votre présence sur les réseaux sociaux — gratuitement et en toute sécurité.",    
+        footer_services: "Services", footer_ig: "Instagram", footer_tt: "TikTok", footer_fb: "Facebook", footer_sc: "Snapchat", footer_pg: "PUBG UC", footer_links: "Liens", footer_privacy: "Confidentialité", footer_terms: "Conditions", footer_copy: "© 2025 Moumen ZwD. Tous droits réservés. Fait avec ♥ pour la communauté.",    
+        notif_text: "Redirection en cours...",    
+      },    
+      ar: {    
+        nav_home: "الرئيسية", nav_services: "الخدمات", nav_about: "عن المنصة", nav_contact: "التواصل",    
+        hero_badge: "خدمات مجانية 100%", hero_title_1: "عزّز حضورك", hero_title_2: "على منصات التواصل",    
+        hero_sub: "زد متابعيك، حسّن ظهورك واستمتع بخدماتنا المميزة — مجاناً تماماً، ويتم التسليم فوراً.",    
+        hero_cta1: "اكتشف الخدمات", hero_cta2: "اعرف أكثر", hstat_label1: "مستخدم نشط", hstat_label2: "خدمة متاحة", hstat_label3: "مجاني وآمن",    
+        stat1: "مستخدم نشط", stat2: "نسبة الرضا", stat3: "متابع تم تقديمه", stat4: "دعم متواصل",    
+        serv_tag: "خدماتنا", serv_title: "أدوات قوية ", serv_title_g: "في متناولك", serv_sub: "اختر الخدمة التي تحتاجها واحصل على نتائج فورية، مجاناً.",    
+        badge_popular: "الأكثر طلباً", badge_hot: "🔥 رائج", badge_new: "جديد", badge_verified: "موثّق", badge_fire: "🔥 ساخن", badge_star: "⭐ الأفضل", badge_new2: "جديد",    
+        svc1_name: "انستغرام — متابعون", svc1_desc: "زد عدد متابعيك على انستغرام بسرعة ومجاناً. عزّز مصداقيتك بنقرات قليلة.",    
+        svc2_name: "ببجي — UC / شظايا", svc2_desc: "احصل على UC وشظايا ببجي مجاناً لتحسين تجربتك في اللعب وفتح محتوى حصري.",    
+        svc3_name: "سناب شات — متابعون", svc3_desc: "نمّ جمهورك على سناب شات وارفع نقاطك باستخدام أداتنا المجانية والآمنة.",    
+        svc4_name: "فري فاير — جواهر مجانية 💎", svc4_desc: "احصل على جواهر 💎 فري فاير مجانا الان . اختر عدد الجواهر التي تحتاجها فقط.",    
+        svc5_name: "فيسبوك — متابعون", svc5_desc: "زد متابعيك على فيسبوك ووسّع نطاق صفحتك المهنية أو الشخصية مجاناً.",    
+        svc6_name: "تيك توك — متابعون", svc6_desc: "اجعل حسابك على تيك توك ينفجر بالمتابعين الحقيقيين. اصبح مشهوراً بخدمتنا السريعة.",    
+        btn_start: "ابدأ مجاناً",    
+        why_tag: "لماذا نحن؟", why_title: "ما يجعلنا ", why_title_g: "مختلفين", why_sub: "نلتزم بتزويدك بأفضل الخدمات الاجتماعية مجاناً وبأمان تام.",    
+        why1_t: "تسليم فوري", why1_d: "تبدأ نتائجك في ثوانٍ بعد طلبك. لا انتظار غير ضروري.", why2_t: "100% آمن", why2_d: "بياناتك الشخصية محمية تماماً. لا نحتاج أبداً إلى كلمة مرورك.", why3_t: "مجاني تماماً", why3_d: "لا اشتراكات، لا بطاقة بنكية. جميع خدماتنا مقدمة مجاناً، إلى الأبد.", why4_t: "دعم 24/7", why4_d: "فريقنا متاح في أي وقت لمرافقتك والإجابة على استفساراتك.",    
+        hot_tag: "أبرز الخدمات", hot_title: "الأكثر ", hot_title_g: "طلباً", hot1_name: "متابعو تيك توك", hot1_count: "+2,400 طلب هذا الأسبوع", hot2_name: "متابعو انستغرام", hot2_count: "+3,100 طلب هذا الأسبوع", hot3_name: "ببجي UC / شظايا", hot3_count: "+980 طلب هذا الأسبوع",    
+        cta_title: "انضم إلى <span class='gradient-text'>+15,000</span> مستخدم نشط", cta_sub: "الآلاف من المستخدمين يثقون في Moumen ZwD لتنمية حضورهم على الإنترنت. لماذا لا أنت؟", cta_btn: "ابدأ الآن",    
+        footer_tagline: "المنصة المرجعية لتعزيز حضورك على شبكات التواصل الاجتماعي — مجاناً وبأمان تام.",    
+        footer_services: "الخدمات", footer_ig: "انستغرام", footer_tt: "تيك توك", footer_fb: "فيسبوك", footer_sc: "سناب شات", footer_pg: "ببجي UC", footer_links: "روابط", footer_privacy: "الخصوصية", footer_terms: "الشروط", footer_copy: "© 2025 Moumen ZwD. جميع الحقوق محفوظة. صُنع بـ ♥ للمجتمع.",    
+        notif_text: "جارٍ إعادة التوجيه...",    
+      }    
+    };    
+    let currentLang = 'fr';    
+
+    function applyLang(lang) {    
+      const scrollPos = window.scrollY;          // حفظ موضع التمرير الحالي    
+      document.body.classList.add('lang-switching');  // تأثير النعومة    
+      const t = LANGS[lang];    
+      const html = document.documentElement;    
+      if (lang === 'ar') { html.setAttribute('dir', 'rtl'); html.setAttribute('lang', 'ar'); document.body.classList.add('rtl'); }    
+      else { html.setAttribute('dir', 'ltr'); html.setAttribute('lang', 'fr'); document.body.classList.remove('rtl'); }    
+      document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key] !== undefined) el.innerHTML = t[key]; });    
+      document.getElementById('notif-text').textContent = t.notif_text;    
+      const ctaTitle = document.querySelector('[data-key="cta_title"]');    
+      if (ctaTitle) ctaTitle.innerHTML = t.cta_title;    
+      document.getElementById('langLabel').textContent = lang === 'ar' ? 'FR' : 'عربي';    
+      document.querySelectorAll('[data-key="footer_copy"]').forEach(el => { el.innerHTML = t.footer_copy.replace('♥', '<span style="color:var(--magenta)">♥</span>'); });    
+      // استعادة موضع التمرير بعد تحديث DOM للحفاظ على المكان (لا رجوع للأعلى)    
+      setTimeout(() => {    
+        window.scrollTo({ top: scrollPos, behavior: 'auto' });    
+        setTimeout(() => document.body.classList.remove('lang-switching'), 280);    
+      }, 18);    
+    }    
+
+    function toggleLang() { applyLang(currentLang === 'fr' ? 'ar' : 'fr'); currentLang = currentLang === 'fr' ? 'ar' : 'fr'; }    
+
+    // LOADER, NAVBAR, CURSOR, REVEAL, COUNTER, NOTIF remain exactly the same as original    
+    window.addEventListener('load', () => { setTimeout(() => { const loader = document.getElementById('loader'); loader.classList.add('hidden'); loader.addEventListener('transitionend', () => loader.remove(), { once: true }); }, 1700); });    
+    const navbar = document.getElementById('navbar');    
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 40); });    
+    function toggleMobileNav() { const hamburger = document.getElementById('hamburger'); const mobileNav = document.getElementById('mobileNav'); hamburger.classList.toggle('open'); mobileNav.classList.toggle('open'); }    
+    function closeMobileNav() { document.getElementById('hamburger').classList.remove('open'); document.getElementById('mobileNav').classList.remove('open'); }    
+    const cursor = document.getElementById('cursor'), cursorRing = document.getElementById('cursor-ring'); let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;    
+    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px'; });    
+    function animateRing() { ringX += (mouseX - ringX) * 0.14; ringY += (mouseY - ringY) * 0.14; cursorRing.style.left = ringX + 'px'; cursorRing.style.top = ringY + 'px'; requestAnimationFrame(animateRing); } animateRing();    
+    document.querySelectorAll('a, button, .service-card, .why-card, .hot-card').forEach(el => { el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursor.style.background = 'var(--magenta)'; cursorRing.style.width = '56px'; cursorRing.style.height = '56px'; cursorRing.style.borderColor = 'rgba(255,45,120,0.55)'; }); el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursor.style.background = 'var(--blue)'; cursorRing.style.width = '38px'; cursorRing.style.height = '38px'; cursorRing.style.borderColor = 'rgba(0,195,255,0.55)'; }); });    
+    const glow = document.getElementById('mouse-glow'); let glowX = 0, glowY = 0;    
+    document.addEventListener('mousemove', (e) => { glowX += (e.clientX - glowX) * 0.06; glowY += (e.clientY - glowY) * 0.06; });    
+    function animateGlow() { glow.style.left = glowX + 'px'; glow.style.top = glowY + 'px'; requestAnimationFrame(animateGlow); } animateGlow();    
+    const revealEls = document.querySelectorAll('.reveal'); const observer = new IntersectionObserver((entries) => { entries.forEach((entry, i) => { if (entry.isIntersecting) { setTimeout(() => entry.target.classList.add('visible'), i * 80); observer.unobserve(entry.target); } }); }, { threshold: 0.12 }); revealEls.forEach(el => observer.observe(el));    
+    function animateCounter(el, target, suffix = '', duration = 2000) { let start = 0; const step = target / (duration / 16); const timer = setInterval(() => { start += step; if (start >= target) { clearInterval(timer); el.textContent = target.toLocaleString() + suffix; } else { el.textContent = Math.floor(start).toLocaleString() + suffix; } }, 16); }    
+    const counterObs = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { const el = entry.target; const target = parseInt(el.getAttribute('data-count')); const suffix = el.getAttribute('data-suffix') || ''; animateCounter(el, target, suffix); counterObs.unobserve(el); } }); }, { threshold: 0.5 }); document.querySelectorAll('[data-count]').forEach(el => counterObs.observe(el));    
+    let notifTimeout; function showNotif() { const notif = document.getElementById('notif'); clearTimeout(notifTimeout); notif.classList.add('show'); notifTimeout = setTimeout(() => notif.classList.remove('show'), 3000); }    
+    document.querySelectorAll('.services-grid .service-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.08}s`; }); document.querySelectorAll('.why-grid .why-card').forEach((card, i) => { card.style.transitionDelay = `${i * 0.08}s`; });    
+  </script>    
+</body>
+</html>
